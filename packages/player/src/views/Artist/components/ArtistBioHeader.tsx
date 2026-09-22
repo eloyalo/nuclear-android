@@ -3,12 +3,11 @@ import { FC } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
-import { cn, Loader } from '@nuclearplayer/ui';
+import { cn } from '@nuclearplayer/ui';
 
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useArtistBio } from '../hooks/useArtistBio';
-
-const AVATAR_SIZE_PX = 300;
+import { ArtistBioHeaderSkeleton } from './ArtistBioHeaderSkeleton';
 
 type ArtistBioHeaderProps = {
   providerId: string;
@@ -27,11 +26,7 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
   } = useArtistBio(providerId, artistId);
 
   if (isLoading) {
-    return (
-      <div className="border-border surface-card shadow-shadow m-4 flex items-center justify-center rounded-md border-(length:--border-width) p-6">
-        <Loader size="xl" data-testid="artist-header-loader" />
-      </div>
-    );
+    return <ArtistBioHeaderSkeleton />;
   }
 
   if (isError) {
@@ -47,7 +42,7 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
   }
 
   const cover = pickArtwork(artist.artwork, 'cover', 1200);
-  const avatar = pickArtwork(artist.artwork, 'avatar', AVATAR_SIZE_PX);
+  const avatar = pickArtwork(artist.artwork, 'avatar', 300);
 
   return (
     <div className="border-border surface-card shadow-shadow relative m-4 rounded-md border-(length:--border-width) p-6">

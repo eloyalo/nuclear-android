@@ -15,10 +15,13 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Extract version from tag
         id: version
@@ -29,13 +32,13 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - name: Setup PNPM
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Get PNPM store directory
         shell: bash
@@ -43,7 +46,7 @@ jobs:
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup PNPM cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -58,6 +61,9 @@ jobs:
 
       - name: Build package for npm
         run: pnpm --filter @nuclearplayer/plugin-sdk build:npm
+
+      - name: Run tests
+        run: pnpm --filter @nuclearplayer/plugin-sdk test
 
       - name: Prepare package.json for publishing
         run: |
@@ -75,12 +81,7 @@ jobs:
             require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));
           "
 
-      - name: Run tests
-        run: pnpm --filter @nuclearplayer/plugin-sdk test
-
       - name: Publish to npm
         run: |
           cd packages/plugin-sdk
-          pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          pnpm publish --access public --no-git-checks --provenance

@@ -10,6 +10,7 @@
 @source '../player';
 @source '../ui';
 @source '../storybook';
+@source '../videos';
 
 @theme {
   --color-background: var(--background);
@@ -177,6 +178,11 @@
   h6 {
     @apply font-bold;
   }
+}
+
+[data-transitions='suspended'],
+[data-transitions='suspended'] * {
+  transition: none !important;
 }
 
 [data-theme='dark'] {

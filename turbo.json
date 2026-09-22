@@ -32,9 +32,6 @@
       "persistent": true
     },
     "@nuclearplayer/player#dev": {
-      "dependsOn": [
-        "@nuclearplayer/player#build:frontend"
-      ],
       "cache": false,
       "persistent": true
     },
@@ -78,6 +75,10 @@
       "outputs": ["dist/**"]
     },
     "@nuclearplayer/website#dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "@nuclearplayer/videos#dev": {
       "cache": false,
       "persistent": true
     }

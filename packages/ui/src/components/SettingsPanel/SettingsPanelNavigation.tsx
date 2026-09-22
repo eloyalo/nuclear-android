@@ -1,6 +1,7 @@
 import { FC, ReactNode } from 'react';
 
 import { cn } from '../../utils';
+import { ScrollableArea } from '../ScrollableArea/ScrollableArea';
 import { SettingsNavigationSection } from './SettingsPanel';
 import { SettingsPanelNavigationSection } from './SettingsPanelNavigationSection';
 
@@ -17,13 +18,15 @@ export const SettingsPanelNavigation: FC<SettingsPanelNavigationProps> = ({
 }) => (
   <nav
     className={cn(
-      'border-border flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r-(length:--border-width) p-4',
+      'border-border flex w-56 shrink-0 flex-col border-r-(length:--border-width)',
       className,
     )}
   >
-    {sections.map((section) => (
-      <SettingsPanelNavigationSection key={section.id} section={section} />
-    ))}
-    {footer && <div className="mt-auto">{footer}</div>}
+    <ScrollableArea viewportClassName="gap-4 p-4">
+      {sections.map((section) => (
+        <SettingsPanelNavigationSection key={section.id} section={section} />
+      ))}
+      {footer && <div className="mt-auto">{footer}</div>}
+    </ScrollableArea>
   </nav>
 );

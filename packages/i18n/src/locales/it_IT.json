@@ -317,6 +317,10 @@
   },
   "preferences": {
     "title": "Preferenze",
+    "navigation": {
+      "general": "Settings",
+      "app": "App"
+    },
     "general": {
       "title": "Generali",
       "language": {

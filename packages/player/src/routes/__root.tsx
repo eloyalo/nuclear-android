@@ -1,4 +1,5 @@
 import { createRootRoute } from '@tanstack/react-router';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import {
   CableIcon,
   DiscIcon,
@@ -9,6 +10,7 @@ import {
   SettingsIcon,
   UserIcon,
 } from 'lucide-react';
+import { useEffect } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import {
@@ -38,6 +40,7 @@ import { useWorkspaceLayout } from '../hooks/useWorkspaceLayout';
 import { GlobalShortcuts } from '../shortcuts';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { useStartupStore } from '../stores/startupStore';
+import { isMobile } from '../utils/platform';
 
 const RootComponent = () => {
   const { t } = useTranslation('navigation');
@@ -70,6 +73,16 @@ const RootComponent = () => {
   });
 
   const closeDrawerOnNavigate = isCompact ? closeDrawer : undefined;
+
+  useEffect(() => {
+    // The window starts hidden to avoid a flash of unstyled content; Android
+    // has no such window and lacks the core:window:* mobile capability.
+    if (isMobile()) {
+      return;
+    }
+    const window = getCurrentWindow();
+    window.show().then(() => window.setFocus());
+  }, []);
 
   return (
     <PlayerShell onContextMenu={(e) => e.preventDefault()}>

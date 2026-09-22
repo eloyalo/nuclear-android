@@ -1,5 +1,53 @@
 [
   {
+    "date": "2026-09-20T00:00",
+    "description": "Fix lag when switching themes.",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Themes",
+        "color": "purple"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-19T00:00",
+    "description": "Prevents flash of unstyled/unthemed content on startup.",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "UI",
+        "color": "blue"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-19T00:00",
+    "description": "Stops log spam if Discord Rich Presence is unavailable. Reconnects correctly if it becomes available after Nuclear is launched.",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Integrations",
+        "color": "cyan"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-18T00:00",
+    "description": "Loading spinners are replaced with skeletons.",
+    "type": "improvement",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "UI",
+        "color": "blue"
+      }
+    ]
+  },
+  {
     "date": "2026-09-12T00:00",
     "description": "Streaming now plays the version that matches the track: results with the right duration and title come first, and live, cover and remix versions are skipped unless the track itself is one.",
     "type": "improvement",

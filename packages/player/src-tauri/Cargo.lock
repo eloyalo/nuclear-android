@@ -665,7 +665,7 @@ checksum = "d38f2da7a0a2c4ccf0065be06397cc26a81f4e528be095826eee9d4adbb8c60f"
 dependencies = [
  "byteorder",
  "fnv",
- "uuid 1.26.0",
+ "uuid 1.26.1",
 ]
 
 [[package]]
@@ -3900,7 +3900,7 @@ dependencies = [
  "log",
  "mime_guess",
  "percent-encoding",
- "reqwest 0.13.4",
+ "reqwest 0.13.5",
  "rmcp",
  "rquickjs",
  "rust-embed",
@@ -3928,7 +3928,7 @@ dependencies = [
  "tempfile",
  "tokio",
  "tokio-util",
- "uuid 1.26.0",
+ "uuid 1.26.1",
  "webpki-roots",
  "zip 2.4.2",
 ]
@@ -4453,11 +4453,11 @@ dependencies = [
 
 [[package]]
 name = "reqwest"
-version = "0.13.4"
+version = "0.13.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "219c5811de6525e5416c7d5d53bb656d3afdbc6c5af816e0802bcfa42dbdc1c3"
+checksum = "16a1cfa75cc186dd73d5818e510e042e40927bccc9c236b061cea97e1eb08029"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.1",
  "bytes",
  "cookie",
  "cookie_store",
@@ -4572,7 +4572,7 @@ dependencies = [
  "tokio-util",
  "tower-service",
  "tracing",
- "uuid 1.26.0",
+ "uuid 1.26.1",
 ]
 
 [[package]]
@@ -4864,7 +4864,7 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
- "uuid 1.26.0",
+ "uuid 1.26.1",
 ]
 
 [[package]]
@@ -5898,7 +5898,7 @@ dependencies = [
  "percent-encoding",
  "plist",
  "raw-window-handle",
- "reqwest 0.13.4",
+ "reqwest 0.13.5",
  "serde",
  "serde_json",
  "serde_repr",
@@ -5964,7 +5964,7 @@ dependencies = [
  "thiserror 2.0.20",
  "time",
  "url",
- "uuid 1.26.0",
+ "uuid 1.26.1",
  "walkdir",
 ]
 
@@ -6146,7 +6146,7 @@ dependencies = [
  "minisign-verify",
  "osakit",
  "percent-encoding",
- "reqwest 0.13.4",
+ "reqwest 0.13.5",
  "rustls",
  "semver",
  "serde",
@@ -6315,7 +6315,7 @@ dependencies = [
  "toml 1.1.6+spec-1.1.0",
  "url",
  "urlpattern",
- "uuid 1.26.0",
+ "uuid 1.26.1",
  "walkdir",
 ]
 
@@ -6918,9 +6918,9 @@ dependencies = [
 
 [[package]]
 name = "uuid"
-version = "1.26.0"
+version = "1.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5772d71c9be8a8a6ac2117d949c5b224c1b72241bb611d9a3012edcf8af7812"
+checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
 dependencies = [
  "getrandom 0.4.1",
  "js-sys",
@@ -8010,7 +8010,7 @@ dependencies = [
  "serde_repr",
  "tracing",
  "uds_windows",
- "uuid 1.26.0",
+ "uuid 1.26.1",
  "windows-sys 0.61.2",
  "winnow 0.7.12",
  "zbus_macros",

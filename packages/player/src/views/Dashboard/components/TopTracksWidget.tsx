@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
-import { Loader } from '@nuclearplayer/ui';
+import { TrackTable } from '@nuclearplayer/ui';
 
 import { ConnectedTrackTable } from '../../../components/ConnectedTrackTable';
 import { useDashboardTopTracks } from '../hooks/useDashboardData';
@@ -16,18 +16,25 @@ export const TopTracksWidget: FC = () => {
   );
 
   return (
-    <div data-testid="dashboard-top-tracks" className="flex flex-col">
+    <div
+      data-testid="dashboard-top-tracks"
+      className="flex h-[32rem] shrink-0 flex-col"
+    >
       <h2 className="mb-2 text-lg font-semibold">{t('top-tracks')}</h2>
-      {isLoading ? (
-        <div className="flex items-center justify-center p-4">
-          <Loader data-testid="dashboard-top-tracks-loader" />
-        </div>
-      ) : (
-        <ConnectedTrackTable
-          tracks={tracks}
-          features={{ filterable: true, playAll: true, addAllToQueue: true }}
+      {isLoading && (
+        <TrackTable.Skeleton
           display={{ displayDuration: false }}
+          data-testid="dashboard-top-tracks-skeleton"
         />
+      )}
+      {!isLoading && (
+        <div className="min-h-0 flex-1">
+          <ConnectedTrackTable
+            tracks={tracks}
+            features={{ filterable: true, playAll: true, addAllToQueue: true }}
+            display={{ displayDuration: false }}
+          />
+        </div>
       )}
     </div>
   );

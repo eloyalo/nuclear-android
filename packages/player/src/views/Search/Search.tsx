@@ -12,7 +12,6 @@ import {
   Button,
   Card,
   CardGrid,
-  Loader,
   Tabs,
   TabsItem,
   ViewShell,
@@ -38,11 +37,7 @@ const SearchContent: FC<{
   }
 
   if (isLoading) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <Loader size="xl" />
-      </div>
-    );
+    return <CardGrid.Skeleton data-testid="search-skeleton" />;
   }
 
   if (isError) {
@@ -119,8 +114,7 @@ export const Search: FC = () => {
   const { q } = useSearch({ from: '/search' });
 
   const provider = useActiveProvider('metadata') as
-    | MetadataProvider
-    | undefined;
+    MetadataProvider | undefined;
 
   const {
     data: results,
