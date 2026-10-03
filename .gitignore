@@ -20,3 +20,4 @@ flatpak/.flatpak-cargo-generator.py
 /android-builds/
 /docs/
 /.rules/
+/updates/
