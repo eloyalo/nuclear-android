@@ -28,6 +28,7 @@ import {
   QueueHeaderActions,
 } from '../components/ConnectedQueuePanel';
 import { ConnectedSettingsModal } from '../components/ConnectedSettingsModal';
+import { ConnectedStreamVerification } from '../components/ConnectedStreamVerification';
 import { ConnectedThemeController } from '../components/ConnectedThemeController';
 import { ConnectedTitleBar } from '../components/ConnectedTitleBar';
 import { ConnectedTopBar } from '../components/ConnectedTopBar';
@@ -158,6 +159,7 @@ const RootComponent = () => {
           <PlayerWorkspace.RightSidebar
             {...right}
             headerActions={<QueueHeaderActions />}
+            footer={<ConnectedStreamVerification />}
           >
             <ConnectedQueuePanel
               isCollapsed={!isCompact && right.isCollapsed}

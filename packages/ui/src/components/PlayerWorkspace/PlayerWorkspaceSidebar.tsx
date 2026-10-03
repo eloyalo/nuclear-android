@@ -55,6 +55,7 @@ export const PlayerWorkspaceSidebar: FC<PlayerWorkspaceSidebarProps> = ({
       className={cn('mb-4 flex flex-row items-center', {
         'justify-end': side === 'left',
         'justify-start': side === 'right',
+        'px-2 pt-2': !isContentCollapsed,
       })}
     >
       <Button
@@ -79,12 +80,15 @@ export const PlayerWorkspaceSidebar: FC<PlayerWorkspaceSidebarProps> = ({
 
   const body = (
     <>
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div
+        className={cn('flex flex-1 flex-col overflow-hidden', {
+          'px-2 pb-2': !isContentCollapsed,
+        })}
+      >
         {children}
-        {!isContentCollapsed && footer && (
-          <div className="mt-auto flex justify-center">{footer}</div>
-        )}
       </div>
+
+      {!isContentCollapsed && footer}
 
       {persistentFooter && (
         <div className="mt-auto flex flex-col items-center gap-2 py-2">
@@ -119,7 +123,7 @@ export const PlayerWorkspaceSidebar: FC<PlayerWorkspaceSidebarProps> = ({
           data-testid={`sidebar-drawer-${side}`}
           aria-hidden={isCollapsed}
           className={cn(
-            'border-border absolute inset-y-0 z-[45] flex w-[min(85vw,20rem)] flex-col overflow-hidden p-2',
+            'border-border absolute inset-y-0 z-[45] flex w-[min(85vw,20rem)] flex-col overflow-hidden',
             {
               'surface-sidebar-left left-0 border-r-(length:--border-width)':
                 side === 'left',
@@ -144,6 +148,7 @@ export const PlayerWorkspaceSidebar: FC<PlayerWorkspaceSidebarProps> = ({
   return (
     <motion.div
       ref={sidebarRef}
+      data-testid={`sidebar-${side}`}
       className={cn(
         'border-border relative flex flex-col overflow-hidden',
         {
@@ -151,7 +156,6 @@ export const PlayerWorkspaceSidebar: FC<PlayerWorkspaceSidebarProps> = ({
             side === 'left',
           'surface-sidebar-right border-l-(length:--border-width)':
             side === 'right',
-          'p-2': !isCollapsed,
         },
         className,
       )}

@@ -59,7 +59,7 @@ pub fn init_innertube(app_handle: AppHandle) {
 }
 
 fn init_search_client(app_handle: &AppHandle) {
-    let builder = RustyPipe::builder().no_reporter();
+    let builder = RustyPipe::builder().no_reporter().no_botguard();
 
     let builder = match app_handle.path().app_cache_dir() {
         Ok(dir) => match std::fs::create_dir_all(&dir) {

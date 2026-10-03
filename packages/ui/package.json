@@ -10,10 +10,15 @@
     ".": {
       "import": "./src/index.ts",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./assets/*": "./src/assets/*"
   },
   "files": [
     "src"
+  ],
+  "sideEffects": [
+    "*.css",
+    "./src/index.ts"
   ],
   "scripts": {
     "dev": "vite build --watch",

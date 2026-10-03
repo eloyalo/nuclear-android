@@ -1,6 +1,11 @@
 ---
+import { getImage } from 'astro:assets';
+
+import dashboardMain from '../../../docs/.gitbook/assets/dashboard-main.png';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { siteDescription } from '../data/site';
+import { version } from '../data/version';
 
 import '../styles/global.css';
 
@@ -18,6 +23,7 @@ type Props = {
   ogImage?: string;
   article?: ArticleMeta;
   extraSchema?: Record<string, unknown>[];
+  discordEmbed?: string;
 };
 
 const {
@@ -27,15 +33,17 @@ const {
   ogImage,
   article,
   extraSchema = [],
+  discordEmbed,
 } = Astro.props;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const ogImageUrl = new URL(
-  ogImage ?? '/images/social-banner.png',
-  Astro.site,
-);
+const socialBannerUrl = new URL('/images/social-banner.png', Astro.site);
+const ogImageUrl = new URL(ogImage ?? socialBannerUrl, Astro.site);
+const rssUrl = new URL('/rss.xml', Astro.site);
 const siteUrl = Astro.site?.toString() ?? 'https://nuclearplayer.com/';
 const logoUrl = new URL('/images/logo-full-outlined.svg', Astro.site).toString();
+const screenshot = await getImage({ src: dashboardMain, width: 1920 });
+const screenshotUrl = new URL(screenshot.src, Astro.site).toString();
 
 const organizationId = `${siteUrl}#organization`;
 const websiteId = `${siteUrl}#website`;
@@ -62,7 +70,7 @@ const jsonLd = {
       '@id': websiteId,
       url: siteUrl,
       name: 'Nuclear Music Player',
-      description,
+      description: siteDescription,
       publisher: { '@id': organizationId },
       inLanguage: 'en',
     },
@@ -70,19 +78,20 @@ const jsonLd = {
       '@type': 'SoftwareApplication',
       '@id': softwareId,
       name: 'Nuclear',
-      description,
+      description: siteDescription,
       url: siteUrl,
       applicationCategory: 'MultimediaApplication',
       operatingSystem: 'Windows, macOS, Linux',
+      softwareVersion: version,
       offers: {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'USD',
       },
       license: 'https://www.gnu.org/licenses/agpl-3.0.html',
-      downloadUrl: 'https://github.com/nukeop/nuclear/releases',
-      image: ogImageUrl.toString(),
-      screenshot: ogImageUrl.toString(),
+      downloadUrl: new URL('/download/', Astro.site).toString(),
+      image: socialBannerUrl.toString(),
+      screenshot: screenshotUrl,
       author: { '@id': organizationId },
       publisher: { '@id': organizationId },
     },
@@ -102,6 +111,12 @@ const jsonLd = {
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/icon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/icon.png" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Nuclear Blog"
+      href={rssUrl}
+    />
     <meta
       name="theme-color"
       content="#ff9cb4"
@@ -157,6 +172,16 @@ const jsonLd = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    {
+      discordEmbed && (
+        <link
+          rel="discord:component-embed"
+          type="application/json"
+          href={new URL(discordEmbed, Astro.site)}
+        />
+      )
+    }
 
     <!-- Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

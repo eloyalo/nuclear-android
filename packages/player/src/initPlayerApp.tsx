@@ -30,45 +30,61 @@ import { initializePlaylistStore } from './stores/playlistStore';
 import { initializeQueueStore } from './stores/queueStore';
 import { initializeSettingsStore } from './stores/settingsStore';
 import { initializeShortcutsStore } from './stores/shortcutsStore';
+import { initializeStreamVerificationStore } from './stores/streamVerificationStore';
 import { hydrateThemeStore } from './stores/themeStore';
 import { useUpdaterStore } from './stores/updaterStore';
 import { isAndroid, isMobile, skipOnMobile } from './utils/platform';
+
+const initializeStores = () =>
+  initializeSettingsStore()
+    .then(() => initializeShortcutsStore())
+    .then(() => initializeQueueStore())
+    .then(() => initializeFavoritesStore())
+    .then(() => initializeStreamVerificationStore())
+    .then(() => initializePlaylistStore());
+
+const initRemoteControl = () =>
+  Promise.resolve()
+    .then(skipOnMobile(initMcpHandler))
+    .then(skipOnMobile(initMpdHandler))
+    .then(skipOnMobile(initHttpApiHandler))
+    .then(() => initBridgeHandler());
+
+const initLanguage = () =>
+  applyLanguageFromSettings().then(() => initLanguageWatcher());
+
+const initThemes = () =>
+  startAdvancedThemeWatcher()
+    .then(() => loadMarketplaceThemes())
+    .then(() => hydrateThemeStore())
+    .then(() => applyThemeFromSettingsIfAny());
+
+const startBackgroundTasks = () => {
+  void hydratePluginsFromRegistry();
+  if (!isMobile()) {
+    void useUpdaterStore.getState().checkForUpdate();
+    void ytdlpEnsureInstalled();
+  }
+};
 
 export const initPlayerApp = async (
   root: ReturnType<typeof import('react-dom/client').createRoot>,
 ) => {
   initLogStream();
 
-  await initializeSettingsStore()
-    .then(() => initializeShortcutsStore())
-    .then(() => initializeQueueStore())
-    .then(() => initializeFavoritesStore())
-    .then(() => initializePlaylistStore())
+  await initializeStores()
     .then(() => registerBuiltInCoreSettings())
     .then(() => initDiscoveryService())
-    .then(skipOnMobile(initMcpHandler))
-    .then(skipOnMobile(initMpdHandler))
-    .then(skipOnMobile(initHttpApiHandler))
-    .then(() => initBridgeHandler())
+    .then(() => initRemoteControl())
     .then(skipOnMobile(initDiscordHandler))
     .then(() => initPlaybackEventBridge())
     .then(() => (isAndroid() ? initMediaSessionHandler() : undefined))
     .then(() => initNextTrackPreparation())
     .then(() => initFailedTrackSkipper())
     .then(() => initHistoryService())
-    .then(() => applyLanguageFromSettings())
-    .then(() => initLanguageWatcher())
-    .then(() => startAdvancedThemeWatcher())
-    .then(() => loadMarketplaceThemes())
-    .then(() => hydrateThemeStore())
-    .then(() => applyThemeFromSettingsIfAny())
-    .then(() => {
-      void hydratePluginsFromRegistry();
-      if (!isMobile()) {
-        void useUpdaterStore.getState().checkForUpdate();
-        void ytdlpEnsureInstalled();
-      }
-    });
+    .then(() => initLanguage())
+    .then(() => initThemes())
+    .then(() => startBackgroundTasks());
 
   root.render(
     <React.StrictMode>
