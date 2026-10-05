@@ -57,7 +57,7 @@ export const LyricsToolbar: FC<LyricsToolbarProps> = ({
     selectedType === 'lineSynced' || selectedType === 'wordSynced';
 
   return (
-    <div className="flex h-14 shrink-0 items-center gap-1.5 px-10">
+    <div className="flex h-14 shrink-0 items-center gap-1.5 px-10 max-sm:h-auto max-sm:flex-wrap max-sm:py-2">
       {!isEmpty(sources) && (
         <LyricsSourcePicker
           data-testid="lyrics-source-picker"
@@ -87,7 +87,7 @@ export const LyricsToolbar: FC<LyricsToolbarProps> = ({
         />
       )}
       {isSynced && (
-        <label className="flex items-center gap-2 px-2 text-sm font-bold">
+        <label className="flex items-center gap-2 px-2 text-sm font-bold whitespace-nowrap">
           {t('autoScroll')}
           <Toggle
             label={t('autoScroll')}
