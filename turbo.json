@@ -7,6 +7,14 @@
       "outputs": [
         "dist/**",
         "build/**"
+      ]
+    },
+    "@nuclearplayer/player#build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
       ],
       "env": [
         "TAURI_SIGNING_PRIVATE_KEY",
@@ -38,17 +46,11 @@
     "lint": {},
     "lint:fix": {},
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
       "outputs": [
         "coverage/**"
       ]
     },
     "test:coverage": {
-      "dependsOn": [
-        "^build"
-      ],
       "outputs": [
         "coverage/**"
       ]

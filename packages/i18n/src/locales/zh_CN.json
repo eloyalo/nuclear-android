@@ -34,6 +34,7 @@
     "favoriteArtists": "喜欢的艺术家",
     "playlists": "播放列表",
     "history": "历史记录",
+    "lyrics": "Lyrics",
     "sources": "来源",
     "menu": "菜单"
   },
@@ -87,6 +88,7 @@
     "discovery": "发现",
     "discoveryDescription": "发现来源会根据您正在收听的内容推荐新歌曲。使用底部栏中的录音机图标启用音乐发现。",
     "lyrics": "歌词",
+    "lyricsDescription": "Lyrics sources provide lyrics for the current track. Nuclear gets lyrics from all lyrics sources at the same time and shows the best result. You can select the lyrics of a different source in the Lyrics view.",
     "lockedReason": "<metadata>{{metadataName}}</metadata> 元数据来源需要 <streaming>{{streamingName}}</streaming> 流媒体来源。",
     "missingStreamingProvider": "所需的流媒体提供程序 \"{{providerId}}\" 不可用",
     "noProviders": "未安装任何提供程序"
@@ -381,6 +383,16 @@
         "description": "选择自定义标题栏控件的视觉样式。"
       }
     },
+    "lyrics": {
+      "textSize": {
+        "title": "Lyrics text size",
+        "description": "The size of the text in the lyrics view."
+      },
+      "autoScroll": {
+        "title": "Lyrics auto-scroll",
+        "description": "Scroll synced lyrics along with the song."
+      }
+    },
     "playback": {
       "title": "播放",
       "skipSeconds": {
@@ -565,6 +577,30 @@
     "repeatOne": "循环播放：单曲",
     "discoveryOn": "发现：开",
     "discoveryOff": "发现：关"
+  },
+  "lyrics": {
+    "nothingPlaying": "Nothing is playing",
+    "nothingPlayingDescription": "Play a track to see its lyrics here.",
+    "noPlugins": "No lyrics plugins installed",
+    "noPluginsDescription": "Install a lyrics plugin to see lyrics for your music.",
+    "browsePlugins": "Browse lyrics plugins",
+    "noLyrics": "No lyrics for this track",
+    "noLyricsDescription": "{{providers, list}} returned no results.",
+    "providerError": "A lyrics provider failed to load lyrics",
+    "instrumental": "Instrumental",
+    "instrumentalDescription": "This track has no lyrics.",
+    "currentLine": "Current line",
+    "showEarlier": "Show lyrics earlier",
+    "showLater": "Show lyrics later",
+    "smaller": "Smaller lyrics",
+    "larger": "Larger lyrics",
+    "autoScroll": "Auto-scroll",
+    "types": {
+      "wordSynced": "Word synced",
+      "lineSynced": "Line synced",
+      "plain": "Plain"
+    },
+    "offsetValue": "{{offset, number(minimumFractionDigits: 1; maximumFractionDigits: 1; signDisplay: exceptZero)}} s"
   },
   "logs": {
     "title": "日志",
