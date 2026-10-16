@@ -197,17 +197,21 @@ export class StreamResolution {
 
     previousController?.abort();
     if (previousItemId && previousItemId !== itemId) {
-      const { getItemById, updateItemState } = useQueueStore.getState();
-      const previousItem = getItemById(previousItemId);
-      if (previousItem) {
-        updateItemState(previousItemId, {
-          status: undefined,
-          error: undefined,
-          track: stripResolutionState(previousItem.track),
-        });
-      }
+      this.resetAbandonedItem(previousItemId);
     }
     return controller.signal;
+  }
+
+  private resetAbandonedItem(itemId: string): void {
+    const { getItemById, updateItemState } = useQueueStore.getState();
+    const item = getItemById(itemId);
+    if (item) {
+      updateItemState(itemId, {
+        status: undefined,
+        error: undefined,
+        track: stripResolutionState(item.track),
+      });
+    }
   }
 }
 

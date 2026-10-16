@@ -56,11 +56,10 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const handleCanPlay = useCallback(() => {
     const currentItem = useQueueStore.getState().getCurrentItem();
-    if (currentItem && !isResolving(currentItem)) {
-      useQueueStore
-        .getState()
-        .updateItemState(currentItem.id, { status: 'success' });
+    if (currentItem && isResolving(currentItem)) {
+      return;
     }
+    playbackManager.sourceReady();
   }, []);
 
   const handleSourceInvalid = useCallback(() => {
@@ -81,12 +80,7 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
         return;
       }
       Logger.streaming.error(`Playback error: ${message}`);
-
-      if (currentItem) {
-        useQueueStore
-          .getState()
-          .updateItemState(currentItem.id, { status: 'error', error: message });
-      }
+      playbackManager.sourceFailed(message);
     },
     [t],
   );
