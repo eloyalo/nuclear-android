@@ -1,5 +1,13 @@
 @AGENTS.md
 
+## Updating the fork to the latest Nuclear version
+
+Whenever the user asks to update the app or the fork ("actualiza", "actualiza a la última versión", "update from master", or anything similar), **read `docs/actualizacion-desde-master.md` first and follow it step by step**. It is the single source of truth for the whole flow: merging `upstream/master` (without committing), the fork-specific conflicts to watch, type-check/lint/tests, building the two APKs, signing them with the release key, testing on the emulator with the NuclearTube and Spotify plugins installed, the summary in `updates/`, the final report, and how the user publishes the release (step 11).
+
+- Don't improvise a different flow. If the procedure is out of date or a step fails, say so in the final report and fix the document, since it gets reused every time.
+- Publishing the GitHub release is the user's job. Never upload anything to GitHub; leave the APKs in `android-builds/` and the notes in `updates/`, and remind the user of step 11.
+- Signing uses `~/.android/nuclear-release.jks` plus the rotation lineage (see `docs/firma-y-actualizaciones-desde-la-app-24-10-2026.md`). Never sign with the debug key alone or commit a keystore.
+
 ## Android emulator hygiene
 
 The `nuclear_api36` emulator is only used to test Android builds and updates. It eats disk space and RAM, so it must never be left behind once testing is done.
