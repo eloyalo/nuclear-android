@@ -24,7 +24,6 @@ import { initMpdHandler } from './services/mpd';
 import { initNextTrackPreparation } from './services/nextTrackPreparation';
 import { initPlaybackEventBridge } from './services/playbackEventBridge';
 import { hydratePluginsFromRegistry } from './services/plugins/pluginBootstrap';
-import { ytdlpEnsureInstalled } from './services/tauri/commands';
 import { initializeFavoritesStore } from './stores/favoritesStore';
 import { initializePlaylistStore } from './stores/playlistStore';
 import { initializeQueueStore } from './stores/queueStore';
@@ -63,7 +62,6 @@ const startBackgroundTasks = () => {
   void hydratePluginsFromRegistry();
   if (!isMobile()) {
     void useUpdaterStore.getState().checkForUpdate();
-    void ytdlpEnsureInstalled();
   }
 };
 

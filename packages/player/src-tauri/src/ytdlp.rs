@@ -1,41 +1,9 @@
 use log::{debug, error};
 use std::process::{Command, Stdio};
-use std::sync::RwLock;
-use tauri::command;
+use tauri::{command, AppHandle};
 
-static YTDLP_PATH: RwLock<Option<String>> = RwLock::new(None);
-
-pub fn set_ytdlp_path(path: String) {
-    if let Ok(mut guard) = YTDLP_PATH.write() {
-        debug!("[yt-dlp] Binary path set to: {}", path);
-        *guard = Some(path);
-    }
-}
-
-fn get_ytdlp_path() -> Result<String, String> {
-    match YTDLP_PATH.read() {
-        Ok(guard) => match guard.as_ref() {
-            Some(path) => Ok(path.clone()),
-            None => {
-                #[cfg(desktop)]
-                {
-                    Err("yt-dlp is not installed. It will be downloaded automatically."
-                        .to_string())
-                }
-                // Android can't execute a downloaded binary; the Innertube-based
-                // replacement is still pending (ANDROID_PORT.md 3.1).
-                #[cfg(mobile)]
-                {
-                    Err("yt-dlp is not available on this platform yet.".to_string())
-                }
-            }
-        },
-        Err(_) => {
-            debug!("[yt-dlp] RwLock poisoned, falling back to system PATH");
-            Ok("yt-dlp".to_string())
-        }
-    }
-}
+#[cfg(desktop)]
+use crate::ytdlp_setup::ensure_binary;
 
 #[derive(serde::Serialize, Debug, PartialEq, specta::Type)]
 pub struct YtdlpStreamInfo {
@@ -104,10 +72,35 @@ struct YtdlpJson {
     upload_date: Option<String>,
 }
 
-fn run_ytdlp(args: &[&str]) -> Result<String, String> {
-    let program = get_ytdlp_path()?;
+fn build_args<'a>(options: &[&'a str], target: &'a str) -> Vec<&'a str> {
+    let mut args = options.to_vec();
+    args.push("--");
+    args.push(target);
+    args
+}
+
+// Android can't execute a downloaded binary; it goes through innertube.rs
+// instead (ANDROID_PORT.md 3.1).
+#[cfg(mobile)]
+async fn run_ytdlp(
+    _app_handle: &AppHandle,
+    _options: &[&str],
+    _target: &str,
+) -> Result<String, String> {
+    Err("yt-dlp is not available on this platform.".to_string())
+}
+
+#[cfg(desktop)]
+async fn run_ytdlp(
+    app_handle: &AppHandle,
+    options: &[&str],
+    target: &str,
+) -> Result<String, String> {
+    let program = ensure_binary(app_handle).await?;
     let mut cmd = Command::new(&program);
-    cmd.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
+    cmd.args(build_args(options, target))
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
 
     #[cfg(target_os = "windows")]
     {
@@ -156,6 +149,7 @@ fn normalize_album_artists(info: &YtdlpJson) -> Vec<String> {
 #[command]
 #[specta::specta]
 pub async fn ytdlp_search(
+    app_handle: AppHandle,
     query: String,
     max_results: Option<u32>,
 ) -> Result<Vec<YtdlpSearchResult>, String> {
@@ -166,18 +160,22 @@ pub async fn ytdlp_search(
     return crate::innertube::search(&query, limit as usize).await;
 
     #[cfg(desktop)]
-    search_with_ytdlp(&query, limit)
+    search_with_ytdlp(&app_handle, &query, limit).await
 }
 
 #[cfg(desktop)]
-fn search_with_ytdlp(query: &str, limit: u32) -> Result<Vec<YtdlpSearchResult>, String> {
+async fn search_with_ytdlp(
+    app_handle: &AppHandle,
+    query: &str,
+    limit: u32,
+) -> Result<Vec<YtdlpSearchResult>, String> {
     let search_url = format!("ytsearch{}:{}", limit, query);
-    let stdout = run_ytdlp(&[
-        "--dump-json",
-        "--flat-playlist",
-        "--no-warnings",
+    let stdout = run_ytdlp(
+        app_handle,
+        &["--dump-json", "--flat-playlist", "--no-warnings"],
         &search_url,
-    ])?;
+    )
+    .await?;
 
     let results: Vec<YtdlpSearchResult> = parse_ndjson_entries(&stdout)
         .into_iter()
@@ -206,6 +204,7 @@ fn search_with_ytdlp(query: &str, limit: u32) -> Result<Vec<YtdlpSearchResult>, 
 #[specta::specta]
 // TODO: Remove video_id parameter after plugins have auto-updated to use url
 pub async fn ytdlp_get_stream(
+    app_handle: AppHandle,
     url: Option<String>,
     video_id: Option<String>,
 ) -> Result<YtdlpStreamInfo, String> {
@@ -221,19 +220,26 @@ pub async fn ytdlp_get_stream(
     return crate::innertube::get_stream(&resolved_url).await;
 
     #[cfg(desktop)]
-    get_stream_with_ytdlp(&resolved_url)
+    get_stream_with_ytdlp(&app_handle, &resolved_url).await
 }
 
 #[cfg(desktop)]
-fn get_stream_with_ytdlp(resolved_url: &str) -> Result<YtdlpStreamInfo, String> {
-    let stdout = run_ytdlp(&[
-        "-f",
-        "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio",
-        "--dump-json",
-        "--no-playlist",
-        "--no-warnings",
-        &resolved_url,
-    ])?;
+async fn get_stream_with_ytdlp(
+    app_handle: &AppHandle,
+    resolved_url: &str,
+) -> Result<YtdlpStreamInfo, String> {
+    let stdout = run_ytdlp(
+        app_handle,
+        &[
+            "-f",
+            "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio",
+            "--dump-json",
+            "--no-playlist",
+            "--no-warnings",
+        ],
+        resolved_url,
+    )
+    .await?;
 
     let info: YtdlpJson = serde_json::from_str(&stdout).map_err(|error| {
         error!("[yt-dlp] Failed to parse output: {}", error);
@@ -269,10 +275,18 @@ fn get_stream_with_ytdlp(resolved_url: &str) -> Result<YtdlpStreamInfo, String> 
 
 #[command]
 #[specta::specta]
-pub async fn ytdlp_get_playlist(url: String) -> Result<YtdlpPlaylistInfo, String> {
+pub async fn ytdlp_get_playlist(
+    app_handle: AppHandle,
+    url: String,
+) -> Result<YtdlpPlaylistInfo, String> {
     debug!("[yt-dlp] Getting playlist: {}", url);
 
-    let stdout = run_ytdlp(&["--dump-json", "--flat-playlist", "--no-warnings", &url])?;
+    let stdout = run_ytdlp(
+        &app_handle,
+        &["--dump-json", "--flat-playlist", "--no-warnings"],
+        &url,
+    )
+    .await?;
     let entries_json = parse_ndjson_entries(&stdout);
 
     let playlist_title = entries_json
@@ -451,6 +465,18 @@ not json
         #[test]
         fn returns_empty_when_all_null() {
             assert!(normalize_album_artists(&empty_json()).is_empty());
+        }
+    }
+
+    mod build_args_tests {
+        use super::*;
+
+        #[test]
+        fn places_dash_prefixed_video_id_after_end_of_options_marker() {
+            assert_eq!(
+                build_args(&["--dump-json", "--no-warnings"], "-2-tGiD2MpU"),
+                vec!["--dump-json", "--no-warnings", "--", "-2-tGiD2MpU"]
+            );
         }
     }
 }

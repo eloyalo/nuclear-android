@@ -135,6 +135,7 @@
     "addToPlaylist": "Add to playlist",
     "filterPlaylists": "Filter playlists...",
     "sortBy": {
+      "custom": "Custom",
       "name": "Name",
       "dateAdded": "Date added",
       "dateModified": "Date modified",
@@ -303,7 +304,8 @@
         "empty": "No plugins available yet."
       },
       "installError": {
-        "title": "Failed to install {{name}}"
+        "title": "Failed to install {{name}}",
+        "unverifiedRelease": "The plugin registry has no verified release for this plugin."
       }
     }
   },
@@ -555,6 +557,20 @@
     "page": "Page {{pageNumber}}"
   },
   "streaming": {
+    "ytdlp": {
+      "install": {
+        "progress": "Downloading yt-dlp… {{percent}}%",
+        "progressUnknown": "Downloading yt-dlp…",
+        "finished": "yt-dlp downloaded",
+        "failed": "Couldn't download yt-dlp"
+      },
+      "update": {
+        "progress": "Updating yt-dlp… {{percent}}%",
+        "progressUnknown": "Updating yt-dlp…",
+        "finished": "yt-dlp updated",
+        "failed": "Couldn't update yt-dlp"
+      }
+    },
     "errors": {
       "noCandidatesFound": "Failed to find stream candidates",
       "allCandidatesFailed": "All stream candidates failed",

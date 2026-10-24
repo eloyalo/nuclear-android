@@ -1,5 +1,53 @@
 [
   {
+    "date": "2026-10-22T00:00",
+    "description": "Nuclear now verifies the plugins installed from the store to ensure they're safe to install.",
+    "type": "improvement",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Plugins",
+        "color": "purple"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-20T00:00",
+    "description": "YouTube videos whose IDs start with a dash play again instead of being skipped for the next search result",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Streaming",
+        "color": "orange"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-19T00:00",
+    "description": "You can now reorder your playlists manually.",
+    "type": "feature",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Playlists",
+        "color": "purple"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-16T00:00",
+    "description": "The first YouTube track no longer fails while yt-dlp is still downloading. Playback waits for the download, and a toast shows its progress",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "YouTube",
+        "color": "red"
+      }
+    ]
+  },
+  {
     "date": "2026-10-16T00:00",
     "description": "Fixed silent YouTube playback on Linux. The AppImage now bundles the GStreamer libav plugin, and the AUR, .deb, and .rpm packages require it.",
     "type": "fix",
