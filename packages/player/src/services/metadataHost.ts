@@ -17,7 +17,9 @@ import {
   type MetadataProvider,
 } from '@nuclearplayer/plugin-sdk';
 
+import { errorMessage } from '../utils/errorMessage';
 import { decodeHtmlEntities } from '../utils/html';
+import { Logger } from './logger';
 import { providersHost } from './providersHost';
 
 const ALL_CATEGORIES: SearchCategory[] = [
@@ -45,6 +47,9 @@ const resolveTypes = (
 ): SearchCategory[] => {
   return requested ?? onlyCategories(provider.searchCapabilities);
 };
+
+const settledValue = <Value>(outcome: PromiseSettledResult<Value>) =>
+  outcome.status === 'fulfilled' ? outcome.value : undefined;
 
 const executeMetadataSearch = async (
   provider: MetadataProvider,
@@ -76,12 +81,44 @@ const executeMetadataSearch = async (
       ? provider.searchPlaylists({ query: params.query, limit: params.limit })
       : undefined;
 
-  const [artists, albums, tracks, playlists] = await Promise.all([
-    artistsPromise ?? Promise.resolve(undefined),
-    albumsPromise ?? Promise.resolve(undefined),
-    tracksPromise ?? Promise.resolve(undefined),
-    playlistsPromise ?? Promise.resolve(undefined),
-  ]);
+  // A provider can choke on one category (a playlist that was deleted, say)
+  // while the rest of the search is fine, so one failure shouldn't hide them all.
+  const [artistsOutcome, albumsOutcome, tracksOutcome, playlistsOutcome] =
+    await Promise.allSettled([
+      artistsPromise,
+      albumsPromise,
+      tracksPromise,
+      playlistsPromise,
+    ]);
+
+  const outcomes = {
+    artists: artistsOutcome,
+    albums: albumsOutcome,
+    tracks: tracksOutcome,
+    playlists: playlistsOutcome,
+  };
+  const failures = Object.entries(outcomes).flatMap(([category, outcome]) =>
+    outcome.status === 'rejected' ? [{ category, reason: outcome.reason }] : [],
+  );
+  const requestedCount = [
+    artistsPromise,
+    albumsPromise,
+    tracksPromise,
+    playlistsPromise,
+  ].filter(Boolean).length;
+  if (failures.length > 0 && failures.length === requestedCount) {
+    throw failures[0].reason;
+  }
+  failures.forEach(({ category, reason }) =>
+    Logger.metadata.warn(
+      `Searching ${category} on '${provider.id}' failed: ${errorMessage(reason)}`,
+    ),
+  );
+
+  const artists = settledValue(artistsOutcome);
+  const albums = settledValue(albumsOutcome);
+  const tracks = settledValue(tracksOutcome);
+  const playlists = settledValue(playlistsOutcome);
 
   const result: SearchResults = {};
   if (artists) {

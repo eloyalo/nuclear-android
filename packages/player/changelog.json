@@ -1,5 +1,29 @@
 [
   {
+    "date": "2026-10-24T00:00",
+    "description": "A search no longer comes back empty when the metadata source fails on just one category, such as playlists. Artists, albums and tracks still show up.",
+    "type": "fix",
+    "contributors": ["eloyalo"],
+    "tags": [
+      {
+        "label": "Search",
+        "color": "orange"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-24T00:00",
+    "description": "The Android app now checks for new releases on startup and can download and install them without leaving the app.",
+    "type": "feature",
+    "contributors": ["eloyalo"],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
+  },
+  {
     "date": "2026-10-22T00:00",
     "description": "Nuclear now verifies the plugins installed from the store to ensure they're safe to install.",
     "type": "improvement",

@@ -148,6 +148,7 @@ fn normalize_album_artists(info: &YtdlpJson) -> Vec<String> {
 
 #[command]
 #[specta::specta]
+#[cfg_attr(mobile, allow(unused_variables))]
 pub async fn ytdlp_search(
     app_handle: AppHandle,
     query: String,
@@ -202,6 +203,7 @@ async fn search_with_ytdlp(
 
 #[command]
 #[specta::specta]
+#[cfg_attr(mobile, allow(unused_variables))]
 // TODO: Remove video_id parameter after plugins have auto-updated to use url
 pub async fn ytdlp_get_stream(
     app_handle: AppHandle,

@@ -30,7 +30,15 @@ describe('getCoreSettingsForPlatform', () => {
     expect(ids).not.toContain('integrations.mpd.enabled');
     expect(ids).not.toContain('integrations.jam.enabled');
     expect(ids).not.toContain('integrations.discord.enabled');
-    expect(ids).not.toContain('updates.checkForUpdates');
+  });
+
+  it('keeps the update settings, since Android updates itself from its releases', () => {
+    mockedPlatform.mockReturnValue('android');
+
+    const ids = idsOf(getCoreSettingsForPlatform());
+
+    expect(ids).toContain('updates.checkForUpdates');
+    expect(ids).toContain('updates.autoInstall');
   });
 
   it('drops window chrome settings that have no window on mobile', () => {

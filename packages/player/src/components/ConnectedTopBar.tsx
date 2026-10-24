@@ -27,27 +27,32 @@ const CompactTopBar: FC = () => {
   const { toggleDrawer } = useWorkspaceLayout();
 
   return (
-    <TopBar>
-      <Button
-        size="icon"
-        variant="text"
-        aria-label={t('menu')}
-        data-testid="mobile-navigation-toggle"
-        onClick={() => toggleDrawer('navigation')}
-      >
-        <MenuIcon size={20} />
-      </Button>
-      <SearchBox />
-      <Button
-        size="icon"
-        variant="text"
-        aria-label={tQueue('title')}
-        data-testid="mobile-queue-toggle"
-        onClick={() => toggleDrawer('queue')}
-      >
-        <ListMusicIcon size={20} />
-      </Button>
-    </TopBar>
+    <>
+      <TopBar>
+        <Button
+          size="icon"
+          variant="text"
+          aria-label={t('menu')}
+          data-testid="mobile-navigation-toggle"
+          onClick={() => toggleDrawer('navigation')}
+        >
+          <MenuIcon size={20} />
+        </Button>
+        <SearchBox />
+        <Button
+          size="icon"
+          variant="text"
+          aria-label={tQueue('title')}
+          data-testid="mobile-queue-toggle"
+          onClick={() => toggleDrawer('queue')}
+        >
+          <ListMusicIcon size={20} />
+        </Button>
+      </TopBar>
+      <div className="flex justify-center py-1 empty:hidden">
+        <UpdateBadge />
+      </div>
+    </>
   );
 };
 

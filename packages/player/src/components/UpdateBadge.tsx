@@ -14,8 +14,18 @@ export const UpdateBadge: FC = () => {
   const downloadProgress = useUpdaterStore((state) => state.downloadProgress);
   const downloadUpdate = useUpdaterStore((state) => state.downloadUpdate);
   const restartToUpdate = useUpdaterStore((state) => state.restartToUpdate);
+  const isAndroidUpdate = useUpdaterStore(
+    (state) => state.androidUpdate !== null,
+  );
+  const needsInstallPermission = useUpdaterStore(
+    (state) => state.needsInstallPermission,
+  );
 
   if (isReadyToRestart) {
+    const label = needsInstallPermission
+      ? t('allowInstalls')
+      : t(isAndroidUpdate ? 'clickToInstall' : 'clickToRestart');
+
     return (
       <Badge
         data-testid="update-badge"
@@ -25,7 +35,7 @@ export const UpdateBadge: FC = () => {
         className="ml-2 cursor-pointer"
         onClick={restartToUpdate}
       >
-        {t('clickToRestart')}
+        {label}
       </Badge>
     );
   }
@@ -38,7 +48,9 @@ export const UpdateBadge: FC = () => {
         color="green"
         className="ml-2"
       >
-        {t('downloading', { progress: downloadProgress })}
+        {isAndroidUpdate
+          ? t('downloadingNoProgress')
+          : t('downloading', { progress: downloadProgress })}
       </Badge>
     );
   }

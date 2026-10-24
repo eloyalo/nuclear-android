@@ -21,3 +21,6 @@ flatpak/.flatpak-cargo-generator.py
 /docs/
 /.rules/
 /updates/
+# Android signing keys must never be committed
+*.jks
+*.keystore

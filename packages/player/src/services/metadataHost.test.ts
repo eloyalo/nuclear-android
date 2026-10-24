@@ -15,6 +15,42 @@ describe('metadataHost', () => {
   });
 
   describe('search', () => {
+    it('keeps the categories that worked when one of them fails', async () => {
+      const provider = new MetadataProviderBuilder()
+        .withId('test-provider')
+        .withSearchCapabilities(['artists', 'albums', 'tracks', 'playlists'])
+        .withSearchArtists(vi.fn().mockResolvedValue(['a1']))
+        .withSearchAlbums(vi.fn().mockResolvedValue(['al1']))
+        .withSearchTracks(vi.fn().mockResolvedValue(['t1']))
+        .withSearchPlaylists(
+          vi.fn().mockRejectedValue(new TypeError('playlist has no images')),
+        )
+        .build();
+      providersHost.register(provider);
+
+      const results = await metadataHost.search({ query: 'xxxtentacion' });
+
+      expect(results).toEqual({
+        artists: ['a1'],
+        albums: ['al1'],
+        tracks: ['t1'],
+      });
+    });
+
+    it('fails when every requested category fails', async () => {
+      const provider = new MetadataProviderBuilder()
+        .withId('test-provider')
+        .withSearchCapabilities(['artists', 'albums'])
+        .withSearchArtists(vi.fn().mockRejectedValue(new Error('offline')))
+        .withSearchAlbums(vi.fn().mockRejectedValue(new Error('offline')))
+        .build();
+      providersHost.register(provider);
+
+      await expect(metadataHost.search({ query: 'radiohead' })).rejects.toThrow(
+        'offline',
+      );
+    });
+
     it('calls unified search when capability present', async () => {
       const search = vi.fn().mockResolvedValue({
         tracks: ['track 1'],

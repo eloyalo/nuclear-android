@@ -1,3 +1,5 @@
+#[cfg(mobile)]
+pub mod app_update;
 pub mod bridge;
 pub mod commands;
 pub mod db;
@@ -98,12 +100,16 @@ fn specta_builder() -> tauri_specta::Builder<tauri::Wry> {
         commands::copy_dir_recursive,
         commands::extract_zip,
         commands::download_file,
+        commands::sha256_file,
         http::http_fetch,
         ytdlp::ytdlp_search,
         ytdlp::ytdlp_get_stream,
         ytdlp::ytdlp_get_playlist,
         logging::get_startup_logs,
         stream_server::stream_server_port,
+        app_update::app_update_can_install,
+        app_update::app_update_open_install_settings,
+        app_update::app_update_install,
         bridge::bridge_respond,
         bridge::bridge_notify,
         history::commands::history_record_event,
@@ -179,7 +185,9 @@ pub fn run() {
 
     #[cfg(mobile)]
     {
-        builder = builder.plugin(media_session::init());
+        builder = builder
+            .plugin(media_session::init())
+            .plugin(app_update::init());
     }
 
     builder

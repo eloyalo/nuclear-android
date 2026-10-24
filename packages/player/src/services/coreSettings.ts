@@ -386,9 +386,6 @@ const DESKTOP_ONLY_SETTING_IDS = new Set([
   'appearance.framelessWindow',
   'appearance.customTitleBar',
   'appearance.titleBarStyle',
-  // tauri-plugin-updater is desktop-only; the app updates through the store.
-  'updates.checkForUpdates',
-  'updates.autoInstall',
   // http_api, mcp, mpd and discord are all #[cfg(desktop)].
   'integrations.jam.enabled',
   'integrations.jam.remoteUrl',

@@ -32,7 +32,7 @@ import { initializeShortcutsStore } from './stores/shortcutsStore';
 import { initializeStreamVerificationStore } from './stores/streamVerificationStore';
 import { hydrateThemeStore } from './stores/themeStore';
 import { useUpdaterStore } from './stores/updaterStore';
-import { isAndroid, isMobile, skipOnMobile } from './utils/platform';
+import { isAndroid, skipOnMobile } from './utils/platform';
 
 const initializeStores = () =>
   initializeSettingsStore()
@@ -60,9 +60,7 @@ const initThemes = () =>
 
 const startBackgroundTasks = () => {
   void hydratePluginsFromRegistry();
-  if (!isMobile()) {
-    void useUpdaterStore.getState().checkForUpdate();
-  }
+  void useUpdaterStore.getState().checkForUpdate();
 };
 
 export const initPlayerApp = async (
