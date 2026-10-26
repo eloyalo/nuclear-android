@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-10-26T00:00",
+    "description": "Security updates for TLS certificate validation (distrusted eMudhra certificates), the auto-updater and the MCP server.",
+    "type": "fix",
+    "contributors": ["nukeop"],
+    "tags": [
+      {
+        "label": "Security",
+        "color": "red"
+      }
+    ]
+  },
+  {
     "date": "2026-10-24T00:00",
     "description": "A search no longer comes back empty when the metadata source fails on just one category, such as playlists. Artists, albums and tracks still show up.",
     "type": "fix",

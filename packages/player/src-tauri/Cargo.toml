@@ -61,13 +61,13 @@ sha2 = "0.11"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 # Desktop-only integrations: MCP server, local HTTP API, Discord rich presence.
-rmcp = { version = "3.0", features = ["server", "transport-streamable-http-server"] }
+rmcp = { version = "3.6", features = ["server", "transport-streamable-http-server"] }
 schemars = "1.0"
 async-stream = "0.3"
 rust-embed = "8"
 mime_guess = "2"
 discord-rich-presence = "1.1.0"
-tauri-plugin-updater = "2"
+tauri-plugin-updater = "2.12"
 tauri-plugin-process = "2"
 
 [target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
