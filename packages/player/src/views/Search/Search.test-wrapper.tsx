@@ -174,6 +174,24 @@ export const SearchWrapper = {
     },
   },
 
+  async openTab(name: string) {
+    await user.click(await screen.findByRole('tab', { name }));
+  },
+
+  get cardTitles() {
+    return screen
+      .getAllByTestId('card-title')
+      .map((title) => title.textContent);
+  },
+
+  async clickCard(title: string) {
+    await user.click(screen.getByText(title));
+  },
+
+  async findPlaylistImportView() {
+    return screen.findByTestId('playlist-import-view');
+  },
+
   async settingsDialog() {
     return screen.findByRole('dialog');
   },

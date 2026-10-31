@@ -19,6 +19,7 @@ import {
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { useActiveProvider } from '../../hooks/useActiveProvider';
+import { useNavigateToPlaylist } from '../../hooks/useNavigateToPlaylist';
 import { metadataHost } from '../../services/metadataHost';
 import { SearchEmptyState } from './SearchEmptyState';
 
@@ -31,6 +32,7 @@ const SearchContent: FC<{
 }> = ({ provider, isLoading, isError, results, refetch }) => {
   const { t } = useTranslation(['search', 'common']);
   const navigate = useNavigate();
+  const navigateToPlaylist = useNavigateToPlaylist();
 
   if (!provider) {
     return <SearchEmptyState />;
@@ -102,6 +104,24 @@ const SearchContent: FC<{
             tracks={results.tracks}
           />
         </div>
+      ),
+    },
+    results?.playlists && {
+      id: 'playlists',
+      label: t('search:results.playlists'),
+      content: (
+        <CardGrid>
+          {results.playlists.map((item) => (
+            <Card
+              key={item.source.id}
+              title={item.name}
+              src={pickArtwork(item.artwork, 'cover', 300)?.url}
+              onClick={() =>
+                navigateToPlaylist(item.source.url ?? item.source.id)
+              }
+            />
+          ))}
+        </CardGrid>
       ),
     },
   ].filter(Boolean);

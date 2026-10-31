@@ -6,6 +6,7 @@ import App from '../../App';
 import { routeTree } from '../../routeTree.gen';
 import { providersHost } from '../../services/providersHost';
 import { MetadataProviderBuilder } from '../../test/builders/MetadataProviderBuilder';
+import { PlaylistProviderBuilder } from '../../test/builders/PlaylistProviderBuilder';
 import { SearchWrapper } from './Search.test-wrapper';
 
 const user = userEvent.setup();
@@ -50,6 +51,68 @@ describe('Search view', () => {
 
     expect(await SearchWrapper.findSkeleton()).toBeInTheDocument();
     expect(SearchWrapper.emptyState).not.toBeInTheDocument();
+  });
+
+  it('shows playlist results and opens them with the matching playlist provider', async () => {
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withSearchCapabilities(['playlists'])
+        .withSearchPlaylists(async () => [
+          {
+            id: 'rock-classics',
+            name: 'Rock Classics',
+            source: {
+              provider: 'test-metadata-provider',
+              id: 'rock-classics',
+              url: 'test:playlist:rock-classics',
+            },
+          },
+        ])
+        .build(),
+    );
+    providersHost.register(
+      new PlaylistProviderBuilder()
+        .withMatchesUrl((url) => url.startsWith('test:playlist:'))
+        .build(),
+    );
+
+    await SearchWrapper.mount('rock');
+    await SearchWrapper.openTab('Playlists');
+
+    expect(SearchWrapper.cardTitles).toEqual(['Rock Classics']);
+
+    await SearchWrapper.clickCard('Rock Classics');
+
+    expect(await SearchWrapper.findPlaylistImportView()).toBeInTheDocument();
+  });
+
+  it('opens playlist results without a url using their source id', async () => {
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withSearchCapabilities(['playlists'])
+        .withSearchPlaylists(async () => [
+          {
+            id: 'test:playlist:jazz',
+            name: 'Jazz Night',
+            source: {
+              provider: 'test-metadata-provider',
+              id: 'test:playlist:jazz',
+            },
+          },
+        ])
+        .build(),
+    );
+    providersHost.register(
+      new PlaylistProviderBuilder()
+        .withMatchesUrl((url) => url.startsWith('test:playlist:'))
+        .build(),
+    );
+
+    await SearchWrapper.mount('jazz');
+    await SearchWrapper.openTab('Playlists');
+    await SearchWrapper.clickCard('Jazz Night');
+
+    expect(await SearchWrapper.findPlaylistImportView()).toBeInTheDocument();
   });
 
   it('opens the plugin store when clicking the search empty state action', async () => {
