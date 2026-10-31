@@ -1,5 +1,6 @@
 use log::{debug, error};
 use std::process::{Command, Stdio};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tauri::{command, AppHandle};
 
 #[cfg(desktop)]
@@ -70,6 +71,31 @@ struct YtdlpJson {
     album_artists: Option<Vec<String>>,
     creators: Option<Vec<String>>,
     upload_date: Option<String>,
+    available_at: Option<i64>,
+}
+
+fn stream_availability_wait(available_at: Option<i64>, now: i64) -> Result<Duration, String> {
+    let remaining_seconds = available_at.unwrap_or(now) - now;
+    if remaining_seconds <= 0 {
+        return Ok(Duration::ZERO);
+    }
+
+    let wait = Duration::from_secs(remaining_seconds as u64);
+    if wait > Duration::from_secs(45) {
+        return Err(format!(
+            "Stream is not available yet: YouTube will only serve it in {} seconds",
+            wait.as_secs()
+        ));
+    }
+
+    Ok(wait)
+}
+
+fn unix_now() -> i64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|elapsed| elapsed.as_secs() as i64)
+        .unwrap_or_default()
 }
 
 fn build_args<'a>(options: &[&'a str], target: &'a str) -> Vec<&'a str> {
@@ -235,6 +261,8 @@ async fn get_stream_with_ytdlp(
         &[
             "-f",
             "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio",
+            "--extractor-args",
+            "youtube:player_client=default,-tv_samsung",
             "--dump-json",
             "--no-playlist",
             "--no-warnings",
@@ -255,6 +283,15 @@ async fn get_stream_with_ytdlp(
         error!("[yt-dlp] No URL in output");
         "No stream URL returned by yt-dlp".to_string()
     })?;
+
+    let wait = stream_availability_wait(info.available_at, unix_now()).map_err(|message| {
+        error!("[yt-dlp] {}", message);
+        message
+    })?;
+    if !wait.is_zero() {
+        debug!("[yt-dlp] Waiting {:?} for stream to become available", wait);
+        tokio::time::sleep(wait).await;
+    }
 
     debug!(
         "[yt-dlp] Got stream for '{}', duration: {:?}s",
@@ -354,6 +391,7 @@ mod tests {
             album_artists: None,
             creators: None,
             upload_date: None,
+            available_at: None,
         }
     }
 
@@ -418,10 +456,7 @@ not json
                 creators: Some(vec!["Performer 1".into(), "Performer 2".into()]),
                 ..empty_json()
             };
-            assert_eq!(
-                normalize_artists(&json),
-                vec!["Performer 1", "Performer 2"]
-            );
+            assert_eq!(normalize_artists(&json), vec!["Performer 1", "Performer 2"]);
         }
 
         #[test]
@@ -449,10 +484,7 @@ not json
                 album_artist: Some("Ignored".into()),
                 ..empty_json()
             };
-            assert_eq!(
-                normalize_album_artists(&json),
-                vec!["Group A", "Group B"]
-            );
+            assert_eq!(normalize_album_artists(&json), vec!["Group A", "Group B"]);
         }
 
         #[test]

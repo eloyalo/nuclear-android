@@ -1,45 +1,54 @@
 import { type FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
-import { Card, CardGrid } from '@nuclearplayer/ui';
+import type { PlaylistIndexNode } from '@nuclearplayer/model';
+import { CardGrid } from '@nuclearplayer/ui';
 
-import { PlaylistArtwork } from './PlaylistArtwork';
+import { FolderCard } from './FolderCard';
+import { PlaylistCard } from './PlaylistCard';
 
 type PlaylistCardGridProps = {
-  playlists: PlaylistIndexEntry[];
-  onCardClick: (id: string) => void;
+  entries: PlaylistIndexNode[];
+  onPlaylistClick: (id: string) => void;
+  onFolderClick: (id: string) => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
+  onMoveIntoFolder: (playlistId: string, folderId: string) => void;
   isReorderable: boolean;
 };
 
 export const PlaylistCardGrid: FC<PlaylistCardGridProps> = ({
-  playlists,
-  onCardClick,
+  entries,
+  onPlaylistClick,
+  onFolderClick,
   onReorder,
+  onMoveIntoFolder,
   isReorderable,
 }) => {
-  const { t } = useTranslation('playlists');
+  const kindOf = (id: string) => entries.find((entry) => entry.id === id)?.kind;
 
   return (
     <CardGrid.Sortable
-      itemIds={playlists.map((playlist) => playlist.id)}
+      itemIds={entries.map((entry) => entry.id)}
       onReorder={onReorder}
+      canDropInto={(activeId, targetId) =>
+        kindOf(activeId) === 'playlist' && kindOf(targetId) === 'folder'
+      }
+      onDropInto={onMoveIntoFolder}
       disabled={!isReorderable}
     >
-      {playlists.map((playlist) => (
-        <CardGrid.SortableItem key={playlist.id} id={playlist.id}>
-          <Card
-            image={
-              <PlaylistArtwork
-                name={playlist.name}
-                thumbnails={playlist.thumbnails}
-              />
-            }
-            title={playlist.name}
-            subtitle={t('trackCount', { count: playlist.itemCount })}
-            onClick={() => onCardClick(playlist.id)}
-          />
+      {entries.map((entry) => (
+        <CardGrid.SortableItem key={entry.id} id={entry.id}>
+          {entry.kind === 'folder' && (
+            <FolderCard
+              folder={entry}
+              onClick={() => onFolderClick(entry.id)}
+            />
+          )}
+          {entry.kind === 'playlist' && (
+            <PlaylistCard
+              playlist={entry}
+              onClick={() => onPlaylistClick(entry.id)}
+            />
+          )}
         </CardGrid.SortableItem>
       ))}
     </CardGrid.Sortable>
