@@ -14,7 +14,9 @@
 /// A `reqwest::ClientBuilder` with a TLS backend that works on the current
 /// platform. Callers add their own timeouts, user agent, etc.
 pub fn client_builder() -> reqwest::ClientBuilder {
-    let builder = reqwest::Client::builder();
+    // YouTube pages now send ~19 KB of response headers; hyper's 16 KB default
+    // resets the HTTP/2 stream with PROTOCOL_ERROR.
+    let builder = reqwest::Client::builder().http2_max_header_list_size(256 * 1024);
 
     #[cfg(target_os = "android")]
     let builder = builder.tls_backend_preconfigured(android::tls_config());
