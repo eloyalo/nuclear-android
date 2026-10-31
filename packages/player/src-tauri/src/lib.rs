@@ -31,6 +31,7 @@ pub mod ytdlp;
 // execute. See ANDROID_PORT.md 3.1 for the replacement plan.
 #[cfg(desktop)]
 pub mod ytdlp_setup;
+#[cfg(desktop)]
 pub mod ytdlp_verify;
 
 // Maximizes the window when running as a non-steam app in steam
