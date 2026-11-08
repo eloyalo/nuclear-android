@@ -4728,6 +4728,7 @@ dependencies = [
  "tempfile",
  "tokio",
  "tokio-util",
+ "tower",
  "uuid 1.26.1",
  "webpki-roots",
  "zip 8.6.0",
