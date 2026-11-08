@@ -4,18 +4,13 @@ import type {
   DragOverEvent,
   DragStartEvent,
 } from '@dnd-kit/core';
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
 import clamp from 'lodash-es/clamp';
 import { FC, ReactNode, RefObject, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-const DRAG_ACTIVATION_DISTANCE_PX = 5;
+import { useReorderSensors } from '../useReorderSensors';
+
 const EDGE_INSET_PX = 1;
 
 type QueueReorderLayerProps = {
@@ -66,11 +61,7 @@ export const QueueReorderLayer: FC<QueueReorderLayerProps> = ({
   onDragCancel,
   children,
 }) => {
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: DRAG_ACTIVATION_DISTANCE_PX },
-    }),
-  );
+  const sensors = useReorderSensors();
 
   const rowNearestPointer = useCallback<CollisionDetection>(
     ({ pointerCoordinates }) => {

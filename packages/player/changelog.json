@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-11-08T00:00",
+    "description": "Fix lists turning into a blank card when scrolling by touch. Reordering by drag now needs a long press on touch screens.",
+    "type": "fix",
+    "contributors": ["eloyalo"],
+    "tags": [
+      {
+        "label": "Mobile",
+        "color": "green"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-08T00:00",
     "description": "Fix the restored track starting to play on its own when reopening the app.",
     "type": "fix",
     "contributors": ["eloyalo"],

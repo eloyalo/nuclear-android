@@ -1,14 +1,10 @@
 import type { DragEndEvent } from '@dnd-kit/core';
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { DndContext } from '@dnd-kit/core';
 import { hasSortableData, SortableContext } from '@dnd-kit/sortable';
 import { FC, ReactNode } from 'react';
 
 import { cn } from '../../utils';
+import { useReorderSensors } from '../useReorderSensors';
 import { CardGridBase } from './CardGridBase';
 import {
   dropIntoCollisionDetection,
@@ -36,9 +32,7 @@ export const SortableCardGrid: FC<SortableCardGridProps> = ({
   children,
   className,
 }) => {
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-  );
+  const sensors = useReorderSensors();
   const { dropTargetId, sortingStrategy, updateDropTarget, endDrag } =
     useDropTarget();
 

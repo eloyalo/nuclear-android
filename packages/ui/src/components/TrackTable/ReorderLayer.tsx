@@ -1,14 +1,10 @@
-import {
-  DndContext,
-  DragEndEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+
+import { useReorderSensors } from '../useReorderSensors';
 
 export function ReorderLayer({
   enabled,
@@ -27,9 +23,7 @@ export function ReorderLayer({
   // dnd-kit's PointerSensor fires on any click, installs a document-level
   // capture listener that swallows the subsequent click event, and breaks
   // every interactive element inside sortable rows (buttons, dropdowns, etc.).
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-  );
+  const sensors = useReorderSensors();
 
   if (!enabled) {
     return <>{children}</>;
