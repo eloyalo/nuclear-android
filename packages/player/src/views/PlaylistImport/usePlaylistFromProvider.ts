@@ -6,7 +6,7 @@ import { useTranslation } from '@nuclearplayer/i18n';
 import type { Playlist, PlaylistItem } from '@nuclearplayer/model';
 import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
 
-import { providersHost } from '../../services/providersHost';
+import { useProviders } from '../../hooks/useProviders';
 import { reportError } from '../../utils/logging';
 
 const EMPTY_ITEMS: PlaylistItem[] = [];
@@ -16,7 +16,9 @@ export const usePlaylistFromProvider = (
   encodedUrl: string,
 ) => {
   const { t } = useTranslation('playlists');
-  const provider = providersHost.get<PlaylistProvider>(providerId, 'playlists');
+  const provider = useProviders('playlists').find(
+    (candidate) => candidate.id === providerId,
+  ) as PlaylistProvider | undefined;
   const decodedUrl = decodeURIComponent(encodedUrl);
 
   const query = useQuery<Playlist>({
