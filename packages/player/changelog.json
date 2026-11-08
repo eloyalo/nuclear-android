@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-11-08T00:00",
+    "description": "Fix the restored track starting to play on its own when reopening the app.",
+    "type": "fix",
+    "contributors": ["eloyalo"],
+    "tags": [
+      {
+        "label": "Playback",
+        "color": "green"
+      }
+    ]
+  },
+  {
     "date": "2026-11-04T00:00",
     "description": "Fix queue panel virtualization. Improves performance for large queues.",
     "type": "fix",

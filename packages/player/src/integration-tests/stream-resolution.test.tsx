@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
+import { eventBus } from '../services/eventBus';
 import { providersHost } from '../services/providersHost';
 import { useQueueStore } from '../stores/queueStore';
 import { useSettingsStore } from '../stores/settingsStore';
@@ -415,6 +416,31 @@ describe('Stream Resolution Integration', () => {
       await StreamResolutionWrapper.waitForPlayback();
 
       expect(searchForTrack).not.toHaveBeenCalled();
+    });
+
+    it('stays paused when a restored stream is recovered after becoming invalid', async () => {
+      setupMetadataProvider();
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withGetStreamUrl(async (candidateId) =>
+            createMockStream(candidateId),
+          )
+          .build(),
+      );
+      setupQueueWithCachedCandidates(new Date().toISOString());
+
+      await AlbumWrapper.mountDirectly();
+      await StreamResolutionWrapper.waitForPlayback();
+      const firstSrc = StreamResolutionWrapper.getSoundState().src;
+
+      eventBus.emit('streamSourceInvalid', createMockTrack('Karma Police'));
+
+      await waitFor(() => {
+        expect(StreamResolutionWrapper.getSoundState().src).not.toBe(firstSrc);
+      });
+      expect(StreamResolutionWrapper.getSoundState().status).not.toBe(
+        'playing',
+      );
     });
   });
 

@@ -32,13 +32,14 @@ export const useStreamRecovery = (maxAttemptsPerItem = 2): void => {
         return;
       }
       attemptsRef.current += 1;
+      const wasPlaying = useSoundStore.getState().status === 'playing';
 
       Logger.streaming.warn(
         `Stream for '${item.track.title}' became invalid; resolving a fresh URL (attempt ${attemptsRef.current})`,
       );
 
       await streamResolution.resolveWithFreshStreams(item, {
-        autoPlay: true,
+        autoPlay: wasPlaying,
         startPositionSeconds: useSoundStore.getState().seek,
       });
     });
